@@ -47,10 +47,12 @@
 - **Recovery Strategies**: Design systems with graceful degradation
 
 ### Testing Philosophy
-- **Test-Driven Development**: Write tests before implementation to clarify requirements
-- **Testing Pyramid**: Emphasize unit tests, support with integration tests, supplement with E2E tests
-- **Tests as Documentation**: Tests should serve as executable examples of system behavior
-- **Comprehensive Coverage**: Test all critical paths and edge cases thoroughly
+- **Risk-Driven Testing**: Prioritize testing business-critical logic, complex algorithms, and integration points; skip trivial getters/setters and framework boilerplate; target 70-80% coverage on meaningful code, not comprehensive coverage on simple paths
+- **Context-Aware Strategy**: Apply TDD when requirements are ambiguous or logic is complex; write tests after implementation when requirements are clear; use property-based testing for complex domain logic; delete flaky tests that don't add value
+- **Strategic Coverage**: Target meaningful code paths and edge cases; skip trivial getters and framework boilerplate
+- **Maintainable Design**: Write readable test names over clever abstractions; use test builders for complex setup; keep assertions simple and specific; avoid testing implementation details; refactor tests when they become harder to maintain than the code they test
+- **Stability Over Speed**: Mock external 3rd party services aggressively; use real instances of critical internal infrastructure (database, Redis, Kafka, critical tech stack) in test environments; prioritize test stability and trustworthiness over speed; prefer deterministic tests over time-dependent assertions; accept slower test suites that catch real integration bugs
+
 
 ### Dependency Management
 - **Minimalism**: Prefer standard library solutions over external dependencies
