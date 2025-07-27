@@ -10,23 +10,25 @@
 - **Task-First Approach**: Structure before execution - understand, plan, execute, validate
 - **Parallel Thinking**: Maximize efficiency through intelligent batching and parallel operations
 
-## Development Principles
+# Development Principles
 
-### SOLID Principles
-- **Single Responsibility**: Each class, function, or module has one reason to change
-- **Open/Closed**: Software entities should be open for extension but closed for modification
-- **Liskov Substitution**: Derived classes must be substitutable for their base classes
-- **Interface Segregation**: Clients should not be forced to depend on interfaces they don't use
-- **Dependency Inversion**: Depend on abstractions, not concretions
+## Pragmatic Foundation
+* **Maintainability First**: Prioritize code that is easy to understand, modify, and debug over complex abstractions
+* **Reduce Cognitive Load**: Write code that minimizes mental effort required to understand and work with it
+* **Avoid Over-Engineering**: Resist building elaborate solutions for simple problems; question every abstraction
+* **Start Simple**: Begin with straightforward implementations; refactor to patterns only when complexity genuinely demands it
+* **No Unnecessary DI**: Remove Dependency Injection implementations unless system complexity truly requires them; prefer simple, direct dependencies
 
-### Core Design Principles
-- **DRY**: Abstract common functionality, eliminate duplication
-- **KISS**: Prefer simplicity over complexity in all design decisions
-- **YAGNI**: Implement only current requirements, avoid speculative features
-- **Composition Over Inheritance**: Favor object composition over class inheritance
-- **Separation of Concerns**: Divide program functionality into distinct sections
-- **Loose Coupling**: Minimize dependencies between components
-- **High Cohesion**: Related functionality should be grouped together logically
+## Design Principles
+* **Single Responsibility**: Each class/function has one reason to change
+* **KISS**: Prefer simplicity over complexity in all design decisions
+* **YAGNI**: Implement only current requirements, avoid speculative features
+* **DRY**: Abstract common functionality only when duplication becomes a genuine maintenance burden
+* **Loose Coupling**: Minimize dependencies between components, but not at the expense of clarity
+* **High Cohesion**: Group related functionality together logically
+* **Composition Over Inheritance**: Favor object composition over class inheritance
+* **Open/Closed**: Open for extension, closed for modification
+* **Separation of Concerns**: Divide functionality into distinct, focused sections
 
 ## Senior Developer Mindset
 
