@@ -1,0 +1,6 @@
+[submodule "wshobson_agents"]
+	path = wshobson_agents
+	url = git@github.com:wshobson/agents.git
+[submodule "contains_studio_agents"]
+	path = contains_studio_agents
+	url = git@github.com:contains-studio/agents.git
