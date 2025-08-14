@@ -1,6 +1,6 @@
-# ClaudeNext - Enhanced Sub-Agents for Claude Code
+# ClaudeNext - Autonomous AI Engineering Team for Claude Code
 
-ClaudeNext is a collection of specialized sub-agents that extend Claude Code's capabilities with domain-specific expertise. It works seamlessly with Claude Code's native Task tool and sub-agent architecture.
+ClaudeNext provides an autonomous CTO orchestrator and a team of specialized sub-agents that extend Claude Code's capabilities. The CTO automatically analyzes your requests and delegates to the right specialists - no manual agent selection needed.
 
 ## 🚀 Quick Start
 
@@ -12,14 +12,36 @@ cd ClaudeNext
 ./install.sh
 
 # Installs everything automatically:
+# • CTO Orchestrator (autonomous delegation)
+# • All 13 specialized sub-agents
 # • CLAUDE.md with engineering principles
-# • All 12 specialized sub-agents
 # • MCP server configuration
+```
+
+### 🎯 Primary Usage - Let the CTO Handle Everything
+
+```python
+# Just send ALL requests to the CTO orchestrator
+Task(
+    subagent_type="cto-orchestrator",
+    prompt="Build a secure payment system"  # CTO figures out the rest
+)
+
+# The CTO will:
+# 1. Analyze your request
+# 2. Select the right specialists
+# 3. Orchestrate the work
+# 4. Deliver results
 ```
 
 ## 📦 What's Included
 
-### Specialized Sub-Agents (12 Total)
+### 🤖 The CTO and Specialist Team (13 Total)
+
+#### Executive Leadership
+**cto-orchestrator** - Autonomous delegation manager that analyzes all requests and coordinates specialists
+
+### Specialized Sub-Agents (12 Specialists)
 
 #### Security & Architecture
 1. **security-auditor** - OWASP compliance and vulnerability scanning
@@ -113,7 +135,8 @@ Task(
 ```
 ~/.claude/
 ├── CLAUDE.md                    # Main instructions with principles
-├── agents/                      # Sub-agent definitions (12 total)
+├── agents/                      # Sub-agent definitions (13 total)
+│   ├── cto-orchestrator.md     # 🎯 Autonomous delegation manager
 │   ├── security-auditor.md     # OWASP compliance & vulnerability scanning
 │   ├── architect.md            # System design & scalability
 │   ├── architect-reviewer.md   # SOLID principles & architectural review
@@ -149,6 +172,7 @@ Task(
 
 | Agent | Best For |
 |-------|----------|
+| **cto-orchestrator** | 🎯 **USE THIS FIRST** - Autonomous delegation for ALL requests |
 | **security-auditor** | Security audits, OWASP compliance, vulnerability scanning |
 | **architect** | System design, technology selection, scalability planning |
 | **architect-reviewer** | Code reviews for SOLID principles, architectural consistency |

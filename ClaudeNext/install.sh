@@ -73,7 +73,8 @@ echo -e "${YELLOW}🚀 Starting Complete ClaudeNext Installation${NC}"
 echo ""
 echo "This will install:"
 echo "  • CLAUDE.md with engineering principles"
-echo "  • All 12 sub-agents for specialized tasks"
+echo "  • CTO Orchestrator for autonomous delegation"
+echo "  • All 13 sub-agents (CTO + 12 specialists)"
 echo "  • MCP server configuration"
 echo ""
 read -p "Continue with installation? (y/n): " confirm
@@ -377,7 +378,8 @@ fi
 
 if [ "$INSTALL_AGENTS" = true ]; then
     echo -e "  ${GREEN}✓${NC} Sub-agents in $AGENTS_DIR"
-    echo "      → All 12 agents installed:"
+    echo "      → All 13 agents installed:"
+    echo "        • Executive: cto-orchestrator (autonomous delegation)"
     echo "        • Security & Architecture: security-auditor, architect, architect-reviewer"
     echo "        • Development: frontend-specialist, golang-pro, code-reviewer"
     echo "        • Performance & Testing: performance-optimizer, test-writer-fixer"
