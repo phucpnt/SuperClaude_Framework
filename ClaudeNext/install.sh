@@ -68,111 +68,27 @@ if [ ! -d "$MCP_CONFIG_DIR" ]; then
     mkdir -p "$MCP_CONFIG_DIR"
 fi
 
-# Installation menu
-echo -e "${YELLOW}Select installation mode:${NC}"
-echo "1) 🚀 Full Installation (Recommended)"
-echo "   → CLAUDE.md + All agents + All MCP servers"
+# Installation configuration - always install everything
+echo -e "${YELLOW}🚀 Starting Complete ClaudeNext Installation${NC}"
 echo ""
-echo "2) 🎯 Core Installation"
-echo "   → CLAUDE.md + Essential agents (architect, security, workflow, AI, testing)"
+echo "This will install:"
+echo "  • CLAUDE.md with engineering principles"
+echo "  • All 12 sub-agents for specialized tasks"
+echo "  • MCP server configuration"
 echo ""
-echo "3) 📦 Agents Only"
-echo "   → All 8 sub-agents, no MCP"
-echo ""
-echo "4) 🔌 MCP Servers Only"
-echo "   → Configure MCP servers, no agents"
-echo ""
-echo "5) 📝 CLAUDE.md Only"
-echo "   → Just the enhanced instructions"
-echo ""
-echo "6) ⚙️  Custom Selection"
-echo "   → Choose exactly what you want"
-echo ""
-read -p "Enter choice [1-6]: " choice
+read -p "Continue with installation? (y/n): " confirm
 
-case $choice in
-    1)  # Full Installation
-        INSTALL_AGENTS=true
-        INSTALL_CLAUDE_MD=true
-        INSTALL_MCP=true
-        SELECTED_AGENTS="all"
-        SELECTED_MCP="all"
-        ;;
-    2)  # Core Installation
-        INSTALL_AGENTS=true
-        INSTALL_CLAUDE_MD=true
-        INSTALL_MCP=true
-        SELECTED_AGENTS="1,2,5,6,7"  # security, architect, workflow, ai-engineer, test-writer
-        SELECTED_MCP="context7,sequential"
-        ;;
-    3)  # Agents Only
-        INSTALL_AGENTS=true
-        INSTALL_CLAUDE_MD=false
-        INSTALL_MCP=false
-        SELECTED_AGENTS="all"
-        ;;
-    4)  # MCP Only
-        INSTALL_AGENTS=false
-        INSTALL_CLAUDE_MD=false
-        INSTALL_MCP=true
-        SELECTED_MCP="all"
-        ;;
-    5)  # CLAUDE.md Only
-        INSTALL_AGENTS=false
-        INSTALL_CLAUDE_MD=true
-        INSTALL_MCP=false
-        ;;
-    6)  # Custom Selection
-        echo ""
-        echo -e "${YELLOW}Select components to install:${NC}"
-        
-        # CLAUDE.md selection
-        read -p "Install CLAUDE.md with engineering principles? (y/n): " install_claude
-        INSTALL_CLAUDE_MD=$([ "$install_claude" = "y" ] && echo true || echo false)
-        
-        # Agents selection
-        if read -p "Install sub-agents? (y/n): " install_agents && [ "$install_agents" = "y" ]; then
-            INSTALL_AGENTS=true
-            echo ""
-            echo -e "${YELLOW}Available agents:${NC}"
-            echo "1) security-auditor      - Security vulnerability scanner"
-            echo "2) architect            - System design expert"
-            echo "3) frontend-specialist  - React/Vue/Angular expert"
-            echo "4) performance-optimizer - Performance specialist"
-            echo "5) workflow-orchestrator - PRD to implementation"
-            echo "6) ai-engineer          - AI/ML implementation specialist"
-            echo "7) test-writer-fixer    - Intelligent test automation"
-            echo "8) experiment-tracker   - A/B testing and metrics"
-            echo "a) All agents"
-            echo ""
-            read -p "Enter selections (e.g., 1,3,5 or 'a' for all): " agent_selection
-            SELECTED_AGENTS="$agent_selection"
-        else
-            INSTALL_AGENTS=false
-        fi
-        
-        # MCP selection
-        if read -p "Install MCP servers? (y/n): " install_mcp && [ "$install_mcp" = "y" ]; then
-            INSTALL_MCP=true
-            echo ""
-            echo -e "${YELLOW}Available MCP servers:${NC}"
-            echo "• context7   - Documentation and API references"
-            echo "• sequential - Complex analysis and reasoning"
-            echo "• magic      - UI component generation"
-            echo "• playwright - Browser automation and testing"
-            echo "• all        - Install all servers"
-            echo ""
-            read -p "Enter selections (e.g., context7,magic or 'all'): " mcp_selection
-            SELECTED_MCP="$mcp_selection"
-        else
-            INSTALL_MCP=false
-        fi
-        ;;
-    *)
-        print_error "Invalid choice. Exiting."
-        exit 1
-        ;;
-esac
+if [ "$confirm" != "y" ]; then
+    print_error "Installation cancelled."
+    exit 0
+fi
+
+# Always install everything
+INSTALL_AGENTS=true
+INSTALL_CLAUDE_MD=true
+INSTALL_MCP=true
+SELECTED_AGENTS="all"
+SELECTED_MCP="all"
 
 echo ""
 echo -e "${BLUE}Starting installation...${NC}"
@@ -214,30 +130,15 @@ if [ "$INSTALL_AGENTS" = true ]; then
         print_status "$agent_name installed"
     }
     
-    # Install selected agents
-    if [ "$SELECTED_AGENTS" = "all" ] || [ "$SELECTED_AGENTS" = "a" ]; then
-        for agent_file in "$CLAUDENEXT_SOURCE"/agents/*.md; do
-            if [ -f "$agent_file" ]; then
-                install_agent "$agent_file"
-            fi
-        done
-    else
-        # Parse comma-separated selections
-        IFS=',' read -ra SELECTIONS <<< "$SELECTED_AGENTS"
-        for selection in "${SELECTIONS[@]}"; do
-            case $selection in
-                1) install_agent "$CLAUDENEXT_SOURCE/agents/security-auditor.md" ;;
-                2) install_agent "$CLAUDENEXT_SOURCE/agents/architect.md" ;;
-                3) install_agent "$CLAUDENEXT_SOURCE/agents/frontend-specialist.md" ;;
-                4) install_agent "$CLAUDENEXT_SOURCE/agents/performance-optimizer.md" ;;
-                5) install_agent "$CLAUDENEXT_SOURCE/agents/workflow-orchestrator.md" ;;
-                6) install_agent "$CLAUDENEXT_SOURCE/agents/ai-engineer.md" ;;
-                7) install_agent "$CLAUDENEXT_SOURCE/agents/test-writer-fixer.md" ;;
-                8) install_agent "$CLAUDENEXT_SOURCE/agents/experiment-tracker.md" ;;
-                *) print_warning "Unknown selection: $selection" ;;
-            esac
-        done
-    fi
+    # Install all agents
+    agent_count=0
+    for agent_file in "$CLAUDENEXT_SOURCE"/agents/*.md; do
+        if [ -f "$agent_file" ]; then
+            install_agent "$agent_file"
+            ((agent_count++))
+        fi
+    done
+    print_info "Total agents installed: $agent_count"
 fi
 
 # Install MCP configuration
@@ -476,11 +377,12 @@ fi
 
 if [ "$INSTALL_AGENTS" = true ]; then
     echo -e "  ${GREEN}✓${NC} Sub-agents in $AGENTS_DIR"
-    if [ "$SELECTED_AGENTS" = "all" ] || [ "$SELECTED_AGENTS" = "a" ]; then
-        echo "      → All 8 agents installed"
-    else
-        echo "      → Selected agents installed"
-    fi
+    echo "      → All 12 agents installed:"
+    echo "        • Security & Architecture: security-auditor, architect, architect-reviewer"
+    echo "        • Development: frontend-specialist, golang-pro, code-reviewer"
+    echo "        • Performance & Testing: performance-optimizer, test-writer-fixer"
+    echo "        • AI & Documentation: ai-engineer, docs-architect"
+    echo "        • Workflow: workflow-orchestrator, experiment-tracker"
 fi
 
 if [ "$INSTALL_MCP" = true ]; then

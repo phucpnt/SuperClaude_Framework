@@ -11,25 +11,37 @@ cd ClaudeNext
 # Run installation script
 ./install.sh
 
-# Choose installation mode:
-# 1) Full Installation (recommended)
-# 2) Agents Only
-# 3) CLAUDE.md Only
-# 4) Custom Selection
+# Installs everything automatically:
+# • CLAUDE.md with engineering principles
+# • All 12 specialized sub-agents
+# • MCP server configuration
 ```
 
 ## 📦 What's Included
 
-### Specialized Sub-Agents
+### Specialized Sub-Agents (12 Total)
 
+#### Security & Architecture
 1. **security-auditor** - OWASP compliance and vulnerability scanning
 2. **architect** - System design and scalability planning
-3. **frontend-specialist** - React/Vue/Angular expert with performance focus
-4. **performance-optimizer** - Sub-100ms response time specialist
-5. **workflow-orchestrator** - PRD to implementation workflow generator
-6. **ai-engineer** - AI/ML implementation, LLM integration, recommendation systems
-7. **test-writer-fixer** - Intelligent test automation and maintenance
-8. **experiment-tracker** - A/B testing, feature validation, metrics analysis
+3. **architect-reviewer** - Reviews for SOLID principles and architectural consistency
+
+#### Development
+4. **frontend-specialist** - React/Vue/Angular expert with performance focus
+5. **golang-pro** - Go expert for idiomatic code with concurrency patterns
+6. **code-reviewer** - Configuration safety and production reliability
+
+#### Performance & Testing
+7. **performance-optimizer** - Sub-100ms response time specialist
+8. **test-writer-fixer** - Intelligent test automation and maintenance
+
+#### AI & Documentation
+9. **ai-engineer** - AI/ML implementation, LLM integration, recommendation systems
+10. **docs-architect** - Creates comprehensive technical documentation from codebases
+
+#### Workflow & Experimentation
+11. **workflow-orchestrator** - PRD to implementation workflow generator
+12. **experiment-tracker** - A/B testing, feature validation, metrics analysis
 
 ### Enhanced Instructions
 
@@ -74,6 +86,9 @@ cd ClaudeNext
 /sc:frontend create accessible React form
 /sc:performance optimize database queries
 /sc:workflow create plan from PRD
+/sc:golang implement concurrent worker pool
+/sc:review check recent changes
+/sc:docs generate system documentation
 ```
 
 ### Direct Agent Invocation
@@ -98,15 +113,19 @@ Task(
 ```
 ~/.claude/
 ├── CLAUDE.md                    # Main instructions with principles
-├── agents/                      # Sub-agent definitions
-│   ├── security-auditor.md
-│   ├── architect.md
-│   ├── frontend-specialist.md
-│   ├── performance-optimizer.md
-│   ├── workflow-orchestrator.md
-│   ├── ai-engineer.md
-│   ├── test-writer-fixer.md
-│   └── experiment-tracker.md
+├── agents/                      # Sub-agent definitions (12 total)
+│   ├── security-auditor.md     # OWASP compliance & vulnerability scanning
+│   ├── architect.md            # System design & scalability
+│   ├── architect-reviewer.md   # SOLID principles & architectural review
+│   ├── frontend-specialist.md  # React/Vue/Angular expert
+│   ├── golang-pro.md          # Go concurrency & idioms
+│   ├── code-reviewer.md       # Configuration safety & reliability
+│   ├── performance-optimizer.md # Sub-100ms response optimization
+│   ├── test-writer-fixer.md   # Test automation & maintenance
+│   ├── ai-engineer.md         # AI/ML implementation
+│   ├── docs-architect.md      # Technical documentation generation
+│   ├── workflow-orchestrator.md # PRD to implementation
+│   └── experiment-tracker.md   # A/B testing & metrics
 ├── claude_desktop_config.json   # MCP server configuration
 ├── test-claudenext.sh          # Agent verification script
 └── test-mcp.sh                 # MCP verification script
@@ -132,11 +151,15 @@ Task(
 |-------|----------|
 | **security-auditor** | Security audits, OWASP compliance, vulnerability scanning |
 | **architect** | System design, technology selection, scalability planning |
+| **architect-reviewer** | Code reviews for SOLID principles, architectural consistency |
 | **frontend-specialist** | UI/UX implementation, accessibility, performance |
+| **golang-pro** | Go concurrency patterns, channels, idiomatic Go code |
+| **code-reviewer** | Configuration safety, production reliability, outage prevention |
 | **performance-optimizer** | Speed optimization, caching, database tuning |
-| **workflow-orchestrator** | Project planning, PRD analysis, task breakdown |
-| **ai-engineer** | AI features, LLM integration, ML pipelines, computer vision |
 | **test-writer-fixer** | Test creation, test repair, coverage analysis |
+| **ai-engineer** | AI features, LLM integration, ML pipelines, computer vision |
+| **docs-architect** | Technical documentation, system manuals, architecture guides |
+| **workflow-orchestrator** | Project planning, PRD analysis, task breakdown |
 | **experiment-tracker** | A/B testing, feature flags, data-driven decisions |
 
 ## 🚦 Wave Execution Strategy
