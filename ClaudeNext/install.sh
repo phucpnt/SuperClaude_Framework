@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# ClaudeNext Complete Installation Script
-# Installs sub-agents, CLAUDE.md, and MCP configuration for Claude Code
+# ClaudeNext Complete Installation Script v2.0
+# Installs CTO orchestrator, specialists, CLAUDE.md, and MCP configuration
 
 set -e
 
@@ -10,27 +10,23 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
 RED='\033[0;31m'
+PURPLE='\033[0;35m'
 NC='\033[0m' # No Color
 
-# Installation paths
+# Version and paths
+VERSION="2.0.0"
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 CLAUDE_DIR="$HOME/.claude"
 AGENTS_DIR="$CLAUDE_DIR/agents"
-CLAUDENEXT_SOURCE="$(dirname "$0")"
+BACKUP_DIR="$HOME/.claude-backup-$VERSION-$TIMESTAMP"
+CLAUDENEXT_SOURCE="$(cd "$(dirname "$0")" && pwd)"
 
-# Detect OS for MCP config location
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    MCP_CONFIG_DIR="$HOME/Library/Application Support/Claude"
-elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    MCP_CONFIG_DIR="$HOME/.config/Claude"
-else
-    echo -e "${RED}✗${NC} Unsupported OS: $OSTYPE"
-    exit 1
-fi
-MCP_CONFIG_FILE="$MCP_CONFIG_DIR/claude_desktop_config.json"
+# ClaudeNext installation paths
 
-echo -e "${BLUE}╔════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║   ClaudeNext Complete Installation     ║${NC}"
-echo -e "${BLUE}╚════════════════════════════════════════╝${NC}"
+echo -e "${PURPLE}╔═══════════════════════════════════════════════════╗${NC}"
+echo -e "${PURPLE}║   ClaudeNext v$VERSION - AI Engineering Team      ║${NC}"
+echo -e "${PURPLE}║   CTO Orchestrator + 14 Specialist Agents        ║${NC}"
+echo -e "${PURPLE}╚═══════════════════════════════════════════════════╝${NC}"
 echo ""
 
 # Function to print status
@@ -50,6 +46,25 @@ print_warning() {
     echo -e "${YELLOW}⚠${NC} $1"
 }
 
+# Create backup directory for existing files
+create_backup() {
+    if [ -d "$CLAUDE_DIR" ] && [ "$(ls -A $CLAUDE_DIR 2>/dev/null)" ]; then
+        print_info "Creating backup at $BACKUP_DIR"
+        mkdir -p "$BACKUP_DIR"
+        
+        # Backup existing files
+        if [ -f "$CLAUDE_DIR/CLAUDE.md" ]; then
+            cp "$CLAUDE_DIR/CLAUDE.md" "$BACKUP_DIR/"
+            print_status "Backed up CLAUDE.md"
+        fi
+        
+        if [ -d "$AGENTS_DIR" ]; then
+            cp -r "$AGENTS_DIR" "$BACKUP_DIR/agents"
+            print_status "Backed up existing agents"
+        fi
+    fi
+}
+
 # Check if Claude Code directory exists
 if [ ! -d "$CLAUDE_DIR" ]; then
     print_info "Creating Claude Code directory at $CLAUDE_DIR"
@@ -62,21 +77,31 @@ if [ ! -d "$AGENTS_DIR" ]; then
     mkdir -p "$AGENTS_DIR"
 fi
 
-# Create MCP config directory if it doesn't exist
-if [ ! -d "$MCP_CONFIG_DIR" ]; then
-    print_info "Creating MCP config directory at $MCP_CONFIG_DIR"
-    mkdir -p "$MCP_CONFIG_DIR"
-fi
+# MCP config directory is same as CLAUDE_DIR, already created above
 
 # Installation configuration - always install everything
-echo -e "${YELLOW}🚀 Starting Complete ClaudeNext Installation${NC}"
+echo -e "${YELLOW}🚀 ClaudeNext Installation Overview${NC}"
 echo ""
-echo "This will install:"
-echo "  • CLAUDE.md with engineering principles"
-echo "  • CTO Orchestrator for autonomous delegation"
-echo "  • All 13 sub-agents (CTO + 12 specialists)"
-echo "  • MCP server configuration"
+echo -e "${BLUE}What will be installed:${NC}"
+echo -e "  ${PURPLE}►${NC} CTO Orchestrator (Primary request handler)"
+echo -e "  ${PURPLE}►${NC} 14 Specialist Agents:"
+echo "     • Security: security-auditor, architect-reviewer, code-reviewer"
+echo "     • Development: golang-pro, frontend-specialist"
+echo "     • Performance: performance-optimizer"
+echo "     • Quality: test-automation-engineer, service-qa-engineer, ux-qa-engineer"
+echo "     • Innovation: ai-engineer, docs-architect, experiment-tracker"
+echo "     • Planning: workflow-orchestrator (TPM), architect"
+echo -e "  ${PURPLE}►${NC} CLAUDE.md with engineering principles"
+echo -e "  ${PURPLE}►${NC} MCP servers via Claude CLI (up to 4 servers)"
+echo -e "  ${PURPLE}►${NC} Documentation and guides"
 echo ""
+
+if [ -d "$CLAUDE_DIR" ] && [ "$(ls -A $CLAUDE_DIR 2>/dev/null)" ]; then
+    echo -e "${YELLOW}⚠️  Existing installation detected${NC}"
+    echo "  Backup will be created at: $BACKUP_DIR"
+    echo ""
+fi
+
 read -p "Continue with installation? (y/n): " confirm
 
 if [ "$confirm" != "y" ]; then
@@ -84,197 +109,226 @@ if [ "$confirm" != "y" ]; then
     exit 0
 fi
 
-# Always install everything
-INSTALL_AGENTS=true
-INSTALL_CLAUDE_MD=true
-INSTALL_MCP=true
-SELECTED_AGENTS="all"
-SELECTED_MCP="all"
+# Create backup if needed
+create_backup
 
 echo ""
 echo -e "${BLUE}Starting installation...${NC}"
 echo ""
 
 # Install CLAUDE.md
-if [ "$INSTALL_CLAUDE_MD" = true ]; then
-    echo -e "${BLUE}Installing CLAUDE.md...${NC}"
-    
-    # Backup existing CLAUDE.md if it exists
-    if [ -f "$CLAUDE_DIR/CLAUDE.md" ]; then
-        backup_file="$CLAUDE_DIR/CLAUDE.md.backup.$(date +%Y%m%d_%H%M%S)"
-        print_info "Backing up existing CLAUDE.md to $(basename $backup_file)"
-        cp "$CLAUDE_DIR/CLAUDE.md" "$backup_file"
-    fi
-    
-    # Copy new CLAUDE.md
+echo -e "${BLUE}Installing CLAUDE.md...${NC}"
+if [ -f "$CLAUDENEXT_SOURCE/CLAUDE.md" ]; then
     cp "$CLAUDENEXT_SOURCE/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"
     print_status "CLAUDE.md installed with engineering principles"
+else
+    print_error "CLAUDE.md not found in source directory"
+    exit 1
 fi
 
 # Install agents
-if [ "$INSTALL_AGENTS" = true ]; then
-    echo ""
-    echo -e "${BLUE}Installing sub-agents...${NC}"
+echo ""
+echo -e "${BLUE}Installing AI Engineering Team...${NC}"
+
+# Function to install an agent
+install_agent() {
+    local agent_file="$1"
+    local agent_name=$(basename "$agent_file" .md)
+    local agent_desc="$2"
     
-    # Function to install an agent
-    install_agent() {
-        local agent_file="$1"
-        local agent_name=$(basename "$agent_file" .md)
-        
-        if [ -f "$AGENTS_DIR/$agent_name.md" ]; then
-            backup_file="$AGENTS_DIR/$agent_name.md.backup.$(date +%Y%m%d_%H%M%S)"
-            print_info "Backing up existing $agent_name"
-            cp "$AGENTS_DIR/$agent_name.md" "$backup_file"
-        fi
-        
-        cp "$agent_file" "$AGENTS_DIR/"
-        print_status "$agent_name installed"
-    }
+    cp "$agent_file" "$AGENTS_DIR/"
     
-    # Install all agents
-    agent_count=0
-    for agent_file in "$CLAUDENEXT_SOURCE"/agents/*.md; do
-        if [ -f "$agent_file" ]; then
-            install_agent "$agent_file"
-            ((agent_count++))
-        fi
-    done
-    print_info "Total agents installed: $agent_count"
+    # Special highlighting for CTO
+    if [ "$agent_name" = "cto" ] || [ "$agent_name" = "cto-orchestrator" ]; then
+        print_status "${PURPLE}[PRIMARY]${NC} $agent_name - $agent_desc"
+    else
+        print_status "$agent_name - $agent_desc"
+    fi
+}
+
+# Install all agents with descriptions
+agent_count=0
+echo -e "${YELLOW}Installing CTO Orchestrator:${NC}"
+if [ -f "$CLAUDENEXT_SOURCE/agents/cto-orchestrator.md" ]; then
+    install_agent "$CLAUDENEXT_SOURCE/agents/cto-orchestrator.md" "Primary orchestrator"
+    agent_count=$((agent_count + 1))
 fi
 
-# Install MCP configuration
-if [ "$INSTALL_MCP" = true ]; then
-    echo ""
-    echo -e "${BLUE}Configuring MCP servers...${NC}"
+echo ""
+echo -e "${YELLOW}Installing Specialist Agents:${NC}"
+
+# Define agent descriptions
+declare -A agent_descriptions=(
+    ["workflow-orchestrator"]="TPM for project planning"
+    ["security-auditor"]="OWASP compliance & vulnerabilities"
+    ["architect"]="System design & scalability"
+    ["architect-reviewer"]="SOLID principles & patterns"
+    ["frontend-specialist"]="React/Vue/Angular expert"
+    ["golang-pro"]="Go concurrency & idioms"
+    ["code-reviewer"]="Configuration safety & reliability"
+    ["performance-optimizer"]="Sub-100ms optimization"
+    ["test-automation-engineer"]="Test design patterns & reliability"
+    ["service-qa-engineer"]="Backend/distributed testing"
+    ["ux-qa-engineer"]="Frontend/UX testing & accessibility"
+    ["ai-engineer"]="AI/ML implementation"
+    ["docs-architect"]="Technical documentation"
+    ["experiment-tracker"]="A/B testing & metrics"
+)
+
+# Install remaining agents
+for agent_file in "$CLAUDENEXT_SOURCE"/agents/*.md; do
+    if [ -f "$agent_file" ]; then
+        agent_name=$(basename "$agent_file" .md)
+        if [ "$agent_name" != "cto-orchestrator" ] && [ "$agent_name" != "cto" ]; then
+            desc="${agent_descriptions[$agent_name]:-Specialist agent}"
+            install_agent "$agent_file" "$desc"
+            agent_count=$((agent_count + 1))
+        fi
+    fi
+done
+
+echo ""
+print_info "Total agents installed: $agent_count (1 CTO + $(($agent_count-1)) specialists)"
+
+# Install MCP servers using Claude CLI
+echo ""
+echo -e "${BLUE}Configuring MCP servers...${NC}"
+
+# Initialize MCP counters
+mcp_installed=0
+mcp_failed=0
+
+# Check prerequisites
+MCP_SKIP=false
+
+# Check for Node.js
+if ! command -v node &> /dev/null; then
+    print_warning "Node.js is not installed. MCP servers require Node.js."
+    echo "  Install from: https://nodejs.org/"
+    echo "  Skipping MCP server installation"
+    MCP_SKIP=true
+else
+    print_status "Node.js detected: $(node --version)"
+fi
+
+# Check for Claude CLI
+if ! command -v claude &> /dev/null; then
+    print_warning "Claude CLI is not installed. MCP servers require Claude CLI."
+    echo "  Visit: https://docs.anthropic.com/en/docs/claude-code"
+    echo "  Skipping MCP server installation"
+    MCP_SKIP=true
+else
+    print_status "Claude CLI detected"
+fi
+
+# Function to check if MCP server is installed
+check_mcp_server() {
+    local server_name=$1
+    claude mcp list 2>/dev/null | grep -q "$server_name"
+}
+
+# Function to install MCP server
+install_mcp_server() {
+    local server_name=$1
+    local npm_package=$2
+    local description=$3
     
-    # Check for Node.js
-    if ! command -v node &> /dev/null; then
-        print_warning "Node.js is not installed. MCP servers require Node.js."
-        echo "  Install from: https://nodejs.org/"
-        echo "  MCP configuration will be created but servers won't run without Node.js"
+    if check_mcp_server "$server_name"; then
+        print_info "$server_name already installed"
+        return 0
+    fi
+    
+    echo "  Installing $server_name: $description"
+    if claude mcp add -s user -- "$server_name" npx -y "$npm_package" 2>/dev/null; then
+        print_status "$server_name installed successfully"
+        return 0
     else
-        print_status "Node.js detected: $(node --version)"
+        print_warning "Failed to install $server_name"
+        return 1
     fi
+}
+
+# Install MCP servers if prerequisites are met
+if [ "$MCP_SKIP" = false ]; then
+    echo ""
+    echo -e "${YELLOW}Installing MCP servers:${NC}"
     
-    # Backup existing MCP config if it exists
-    if [ -f "$MCP_CONFIG_FILE" ]; then
-        backup_file="$MCP_CONFIG_FILE.backup.$(date +%Y%m%d_%H%M%S)"
-        print_info "Backing up existing MCP config"
-        cp "$MCP_CONFIG_FILE" "$backup_file"
-    fi
+    # Define servers with correct npm packages
+    install_mcp_server "sequential-thinking" "@modelcontextprotocol/server-sequential-thinking" "Multi-step problem solving" && mcp_installed=$((mcp_installed+1)) || mcp_failed=$((mcp_failed+1))
+        install_mcp_server "context7" "@upstash/context7-mcp" "Official library documentation" && mcp_installed=$((mcp_installed+1)) || mcp_failed=$((mcp_failed+1))
     
-    # Function to generate server config
-    generate_server_config() {
-        local server=$1
-        local first=$2
-        
-        if [ "$first" != "true" ]; then
-            echo ","
-        fi
-        
-        case $server in
-            context7)
-                cat <<EOF
-    "context7": {
-      "command": "npx",
-      "args": ["-y", "@context7/mcp-server"],
-      "description": "Official library documentation and API references"
-    }
-EOF
-                ;;
-            sequential)
-                cat <<EOF
-    "sequential": {
-      "command": "npx",
-      "args": ["-y", "@sequential/thinking-server"],
-      "description": "Complex analysis and multi-step reasoning"
-    }
-EOF
-                ;;
-            magic)
-                cat <<EOF
-    "magic": {
-      "command": "npx",
-      "args": ["-y", "@magic/ui-server"],
-      "description": "UI component generation and design systems"
-    }
-EOF
-                ;;
-            playwright)
-                cat <<EOF
-    "playwright": {
-      "command": "npx",
-      "args": ["-y", "@playwright/mcp-server"],
-      "description": "Browser automation and E2E testing"
-    }
-EOF
-                ;;
-        esac
-    }
-    
-    # Generate MCP config file
-    {
-        echo "{"
-        echo "  \"mcpServers\": {"
-        
-        # Add selected servers
-        if [ "$SELECTED_MCP" = "all" ]; then
-            generate_server_config "context7" true
-            generate_server_config "sequential" false
-            generate_server_config "magic" false
-            generate_server_config "playwright" false
+        # Magic server requires API key
+        if [ -n "$TWENTYFIRST_API_KEY" ]; then
+            install_mcp_server "magic" "@21st-dev/magic" "UI component generation" && mcp_installed=$((mcp_installed+1)) || mcp_failed=$((mcp_failed+1))
         else
-            IFS=',' read -ra MCP_ARRAY <<< "$SELECTED_MCP"
-            FIRST=true
-            for server in "${MCP_ARRAY[@]}"; do
-                server=$(echo "$server" | xargs) # Trim whitespace
-                generate_server_config "$server" "$FIRST"
-                FIRST=false
-            done
+            print_info "Skipping magic server (requires TWENTYFIRST_API_KEY environment variable)"
         fi
-        
-        echo ""
-        echo "  }"
-        echo "}"
-    } > "$MCP_CONFIG_FILE"
     
-    print_status "MCP servers configured in $(basename $MCP_CONFIG_DIR)"
+        install_mcp_server "playwright" "@playwright/mcp@latest" "Browser automation & E2E testing" && mcp_installed=$((mcp_installed+1)) || mcp_failed=$((mcp_failed+1))
     
-    # Create MCP test script
-    cat > "$CLAUDE_DIR/test-mcp.sh" <<'EOF'
+    echo ""
+    if [ $mcp_installed -gt 0 ]; then
+        print_status "MCP servers configured: $mcp_installed installed successfully"
+    fi
+    
+    if [ $mcp_failed -gt 0 ]; then
+        print_warning "Some MCP servers failed to install: $mcp_failed failed"
+    fi
+    
+    # Verify installation
+    echo ""
+    echo -e "${BLUE}Verifying MCP installation:${NC}"
+    if claude mcp list &>/dev/null; then
+        echo "Installed MCP servers:"
+        claude mcp list 2>/dev/null | grep -E "^\s+[a-z]" | while read -r line; do
+            echo "  • $line"
+        done
+    else
+        print_warning "Could not verify MCP installation"
+    fi
+else
+    print_warning "MCP server installation skipped due to missing prerequisites"
+fi
+
+# Create MCP test script
+cat > "$CLAUDE_DIR/test-mcp.sh" <<'EOF'
 #!/bin/bash
 
 echo "MCP Configuration Status:"
 echo ""
 
-# Find config file
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    CONFIG_FILE="$HOME/Library/Application Support/Claude/claude_desktop_config.json"
-elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    CONFIG_FILE="$HOME/.config/Claude/claude_desktop_config.json"
-fi
-
-if [ -f "$CONFIG_FILE" ]; then
-    echo "✓ Config file found"
-    echo ""
-    echo "Configured MCP servers:"
-    grep -o '"[^"]*"[[:space:]]*:[[:space:]]*{' "$CONFIG_FILE" | grep -v mcpServers | sed 's/[": {]//g' | while read server; do
-        echo "  • $server"
-    done
+# Check if Claude CLI is available
+if ! command -v claude &> /dev/null; then
+    echo "✗ Claude CLI not installed"
+    echo "  Visit: https://docs.anthropic.com/en/docs/claude-code"
 else
-    echo "✗ Config file not found"
+    echo "✓ Claude CLI detected"
+    
+    # List installed MCP servers
+    echo ""
+    echo "Installed MCP servers:"
+    if claude mcp list 2>/dev/null | grep -q "No MCP servers"; then
+        echo "  ✗ No MCP servers installed"
+    else
+        claude mcp list 2>/dev/null | grep -E "^\s+[a-z]" | while read -r line; do
+            echo "  • $line"
+        done
+    fi
 fi
 
 echo ""
+echo "System Requirements:"
 echo "Node.js: $(node --version 2>/dev/null || echo 'Not installed')"
 echo "NPM: $(npm --version 2>/dev/null || echo 'Not installed')"
+echo "Claude CLI: $(claude --version 2>/dev/null || echo 'Not installed')"
 EOF
     chmod +x "$CLAUDE_DIR/test-mcp.sh"
-fi
+
+# Create test script
+echo ""
+echo -e "${BLUE}Creating test script...${NC}"
 
 # Create comprehensive test script
-echo ""
-echo -e "${BLUE}Creating test scripts...${NC}"
 cat > "$CLAUDE_DIR/test-claudenext.sh" << 'EOF'
 #!/bin/bash
 
@@ -282,11 +336,12 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
 RED='\033[0;31m'
+PURPLE='\033[0;35m'
 NC='\033[0m'
 
-echo -e "${BLUE}╔════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║     ClaudeNext Installation Test       ║${NC}"
-echo -e "${BLUE}╚════════════════════════════════════════╝${NC}"
+echo -e "${PURPLE}╔════════════════════════════════════════╗${NC}"
+echo -e "${PURPLE}║     ClaudeNext Installation Test       ║${NC}"
+echo -e "${PURPLE}╚════════════════════════════════════════╝${NC}"
 echo ""
 
 # Check CLAUDE.md
@@ -327,19 +382,19 @@ fi
 
 echo ""
 echo -e "${YELLOW}MCP Configuration:${NC}"
-# Find config file
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    CONFIG_FILE="$HOME/Library/Application Support/Claude/claude_desktop_config.json"
-elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    CONFIG_FILE="$HOME/.config/Claude/claude_desktop_config.json"
-fi
-
-if [ -f "$CONFIG_FILE" ]; then
-    echo -e "  ${GREEN}✓${NC} MCP config found"
-    mcp_count=$(grep -o '"[^"]*"[[:space:]]*:[[:space:]]*{' "$CONFIG_FILE" 2>/dev/null | grep -v mcpServers | wc -l)
-    echo -e "  ${BLUE}ℹ${NC} $mcp_count MCP servers configured"
+# Check MCP servers via Claude CLI
+if command -v claude &> /dev/null; then
+    mcp_count=$(claude mcp list 2>/dev/null | grep -cE "^\s+[a-z]" || echo "0")
+    if [ "$mcp_count" -gt 0 ]; then
+        echo -e "  ${GREEN}✓${NC} $mcp_count MCP servers installed"
+        claude mcp list 2>/dev/null | grep -E "^\s+[a-z]" | head -4 | while read -r line; do
+            echo -e "    • $line"
+        done
+    else
+        echo -e "  ${YELLOW}⚠${NC} No MCP servers installed"
+    fi
 else
-    echo -e "  ${YELLOW}⚠${NC} MCP config not found"
+    echo -e "  ${RED}✗${NC} Claude CLI not found - cannot check MCP servers"
 fi
 
 echo ""
@@ -354,9 +409,20 @@ echo ""
 echo -e "${GREEN}Test Complete!${NC}"
 echo ""
 echo "Quick test commands:"
-echo "  • Test agents: Task(subagent_type=\"architect\", prompt=\"Design a chat system\")"
-echo "  • Test routing: /sc implement secure authentication"
-echo "  • Test MCP: Type 'import React' to trigger context7"
+echo "  ${PURPLE}• PRIMARY: Task(subagent_type=\"cto\", prompt=\"Build secure API\")${NC}"
+echo "  • Direct: Task(subagent_type=\"golang-pro\", prompt=\"Write concurrent code\")"
+echo "  • Planning: Task(subagent_type=\"workflow-orchestrator\", prompt=\"Plan e-commerce platform\")"
+echo ""
+echo -e "${YELLOW}CTO Orchestrator Status:${NC}"
+if [ -f ~/.claude/agents/cto-orchestrator.md ] || [ -f ~/.claude/agents/cto.md ]; then
+    echo -e "  ${GREEN}✓${NC} CTO installed - Ready to handle ALL requests"
+    echo "  ${BLUE}ℹ${NC} The CTO will automatically:"
+    echo "     • Analyze complexity and delegate to TPM if needed"
+    echo "     • Route to specialists based on confidence"
+    echo "     • Enforce quality gates before delivery"
+else
+    echo -e "  ${RED}✗${NC} CTO not found - Primary orchestrator missing!"
+fi
 EOF
 
 chmod +x "$CLAUDE_DIR/test-claudenext.sh"
@@ -376,23 +442,21 @@ if [ "$INSTALL_CLAUDE_MD" = true ]; then
     echo -e "  ${GREEN}✓${NC} CLAUDE.md with engineering principles"
 fi
 
-if [ "$INSTALL_AGENTS" = true ]; then
-    echo -e "  ${GREEN}✓${NC} Sub-agents in $AGENTS_DIR"
-    echo "      → All 13 agents installed:"
-    echo "        • Executive: cto-orchestrator (autonomous delegation)"
-    echo "        • Security & Architecture: security-auditor, architect, architect-reviewer"
-    echo "        • Development: frontend-specialist, golang-pro, code-reviewer"
-    echo "        • Performance & Testing: performance-optimizer, test-writer-fixer"
-    echo "        • AI & Documentation: ai-engineer, docs-architect"
-    echo "        • Workflow: workflow-orchestrator, experiment-tracker"
-fi
+echo -e "  ${GREEN}✓${NC} AI Engineering Team in $AGENTS_DIR"
+echo "      ${PURPLE}→ CTO Orchestrator${NC} (Primary handler for ALL requests)"
+echo "      → 14 Specialist Agents:"
+echo "        • Planning: workflow-orchestrator (TPM), architect"
+echo "        • Security: security-auditor, architect-reviewer, code-reviewer"
+echo "        • Development: frontend-specialist, golang-pro"
+echo "        • Performance: performance-optimizer"
+echo "        • Quality: test-automation-engineer, service-qa-engineer, ux-qa-engineer"
+echo "        • Innovation: ai-engineer, docs-architect, experiment-tracker"
 
-if [ "$INSTALL_MCP" = true ]; then
-    echo -e "  ${GREEN}✓${NC} MCP servers configured"
-    if [ "$SELECTED_MCP" = "all" ]; then
-        echo "      → All 4 servers: context7, sequential, magic, playwright"
-    else
-        echo "      → Selected servers: $SELECTED_MCP"
+if [ "$MCP_SKIP" = false ] && [ $mcp_installed -gt 0 ]; then
+    echo -e "  ${GREEN}✓${NC} MCP servers installed: $mcp_installed servers"
+    echo "      → sequential-thinking, context7, playwright"
+    if [ -n "$TWENTYFIRST_API_KEY" ]; then
+        echo "      → magic (with API key)"
     fi
 fi
 
@@ -401,25 +465,42 @@ echo -e "${YELLOW}Next Steps:${NC}"
 echo ""
 echo "1. ${BLUE}Restart Claude Code${NC} for changes to take effect"
 echo ""
-echo "2. ${BLUE}Verify installation:${NC}"
+echo "2. ${BLUE}Test installation:${NC}"
 echo "   $CLAUDE_DIR/test-claudenext.sh"
 echo ""
-echo "3. ${BLUE}Start using ClaudeNext:${NC}"
-echo "   • Auto-routing: ${GREEN}/sc implement user authentication${NC}"
-echo "   • Specific agent: ${GREEN}/sc:security audit my code${NC}"
-echo "   • Direct invocation: ${GREEN}Task(subagent_type=\"architect\", prompt=\"...\")${NC}"
+echo "3. ${PURPLE}PRIMARY USAGE - Let CTO handle everything:${NC}"
+echo "   ${GREEN}Task(subagent_type=\"cto\", prompt=\"your request\")${NC}"
+echo ""
+echo "   The CTO will:"
+echo "   • Analyze complexity and risk"
+echo "   • Delegate to workflow-orchestrator for complex projects"
+echo "   • Route to specialists based on confidence"
+echo "   • Enforce quality gates before delivery"
+echo ""
+echo "4. ${BLUE}Alternative usage patterns:${NC}"
+echo "   • Direct specialist: ${GREEN}Task(subagent_type=\"golang-pro\", ...)${NC}"
+echo "   • Force planning: ${GREEN}Task(subagent_type=\"workflow-orchestrator\", ...)${NC}"
 echo ""
 
-if [ "$INSTALL_MCP" = true ]; then
-    echo "4. ${BLUE}MCP servers will activate automatically:${NC}"
-    echo "   • Type 'import React' → context7 activates"
-    echo "   • Type 'debug complex' → sequential activates"
-    echo "   • Type 'create component' → magic activates"
-    echo "   • Type 'run e2e test' → playwright activates"
+echo "5. ${BLUE}MCP servers activate automatically:${NC}"
+echo "   • 'import React' → context7"
+echo "   • Complex analysis → sequential-thinking"
+echo "   • UI generation → magic (requires API key)"
+echo "   • E2E testing → playwright"
+echo ""
+
+echo -e "${PURPLE}═══════════════════════════════════════════════════${NC}"
+echo -e "${GREEN}ClaudeNext v$VERSION installed successfully!${NC}"
+echo -e "${PURPLE}═══════════════════════════════════════════════════${NC}"
+echo ""
+if [ -d "$BACKUP_DIR" ]; then
+    echo "Previous installation backed up to: $BACKUP_DIR"
     echo ""
 fi
-
-echo -e "${GREEN}ClaudeNext is ready to enhance your development!${NC}"
-echo ""
-echo "Documentation: $CLAUDENEXT_SOURCE/README.md"
-echo "MCP Guide: $CLAUDENEXT_SOURCE/docs/MCP_SETUP.md"
+echo "Installed components:"
+echo "  • CLAUDE.md: Enhanced instructions"
+echo "  • CTO Agent: Primary orchestrator"
+echo "  • 14 Specialists: Development team"
+if [ $mcp_installed -gt 0 ]; then
+    echo "  • MCP Servers: $mcp_installed installed"
+fi

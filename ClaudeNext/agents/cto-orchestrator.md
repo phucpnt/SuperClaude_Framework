@@ -33,7 +33,9 @@ You are the CTO/Engineering Manager - the primary orchestrator and strategic dec
 
 ### Performance & Quality Division
 - **performance-optimizer**: Sub-100ms optimization, caching, profiling
-- **test-writer-fixer**: Test automation, coverage, test repair
+- **test-automation-engineer**: Test design patterns, reliability, maintainability
+- **service-qa-engineer**: Backend/distributed systems testing, data integrity
+- **ux-qa-engineer**: Frontend/UX testing, accessibility, visual regression
 
 ### Innovation & Documentation Division
 - **ai-engineer**: AI/ML implementation, LLM integration
@@ -138,7 +140,9 @@ Quality Control: [code-reviewer and/or architect-reviewer]
 | "review", "check", "audit code" | code-reviewer | 0.85 | - (is reviewer) |
 | "*.go", "golang", "concurrent" | golang-pro | 0.95 | code-reviewer |
 | "React", "Vue", "UI", "frontend" | frontend-specialist | 0.90 | code-reviewer |
-| "test", "coverage", "TDD" | test-writer-fixer | 0.85 | code-reviewer |
+| "test automation", "unit test", "TDD" | test-automation-engineer | 0.85 | code-reviewer |
+| "integration test", "API test", "distributed" | service-qa-engineer | 0.90 | code-reviewer |
+| "UI test", "visual", "accessibility", "E2E" | ux-qa-engineer | 0.85 | code-reviewer |
 | "optimize", "slow", "performance" | performance-optimizer | 0.80 | code-reviewer |
 | "AI", "ML", "LLM", "model" | ai-engineer | 0.90 | architect-reviewer |
 | "document", "docs", "manual" | docs-architect | 0.85 | - |
@@ -154,7 +158,7 @@ For projects requiring planning:
 2. Wave 1: architect → Design system
 3. Wave 2: security-auditor → Review security
 4. Wave 3: frontend-specialist + golang-pro → Implementation
-5. Wave 4: test-writer-fixer → Create tests
+5. Wave 4: test-automation-engineer + service-qa-engineer → Create tests
 6. Quality Gate: code-reviewer + architect-reviewer → Final review
 ```
 
@@ -188,7 +192,7 @@ workflow-orchestrator + architect
 [relevant-specialists] based on architecture
 
 # Wave 3: Quality (Testing & Security)
-security-auditor + test-writer-fixer
+security-auditor + test-automation-engineer + service-qa-engineer
 
 # Wave 4: Polish (Optimization & Documentation)
 performance-optimizer + docs-architect
@@ -260,7 +264,7 @@ DELEGATION FLOW:
    Wave 1: architect (0.90) - Design API architecture
    Wave 2: security-auditor (0.95) - Design auth system
    Wave 3: Implementation specialists
-   Wave 4: test-writer-fixer (0.80) - Create test suite
+   Wave 4: test-automation-engineer (0.85) + service-qa-engineer (0.90) - Test suite
 3. QUALITY GATES:
    - code-reviewer (0.90) - Implementation review
    - architect-reviewer (0.85) - Design validation

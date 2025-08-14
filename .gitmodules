@@ -4,3 +4,6 @@
 [submodule "contains_studio_agents"]
 	path = contains_studio_agents
 	url = git@github.com:contains-studio/agents.git
+[submodule "cc_unified_agents"]
+	path = cc_unified_agents
+	url = git@github.com:stretchcloud/claude-code-unified-agents.git
